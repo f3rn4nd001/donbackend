@@ -14,8 +14,8 @@ use App\Http\Controllers\Login\loginController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('Registre', [loginController::class,'register']);
-Route::post('Login', [loginController::class,'login']);
+Route::post('Login', [loginController::class,'posLogin']);
 Route::post('logout', [loginController::class,'logout']);
+Route::post('Login/postValidadContrasena', [loginController::class,'postValidadContrasena'])->middleware('validadores');
 
 Auth::routes();

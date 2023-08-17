@@ -1,13 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\operacion\viaje;
-use App\Http\Controllers\catalogo\usuario;
-use App\Http\Controllers\Login\loginController;
-use App\Http\Controllers\catalogo\menuSubmenuControPermisos;
-use App\Http\Controllers\catalogo\ciuddesEntidades;
-use App\Http\Controllers\catalogo\tiff;
-use App\Http\Controllers\sistemas\permisosController;
 
 /*
 |--------------------------------------------------------------------------
