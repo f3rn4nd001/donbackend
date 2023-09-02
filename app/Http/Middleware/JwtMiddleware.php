@@ -32,7 +32,7 @@ class JwtMiddleware
                 );
             }
             
-            $ecodCorreo   = (isset($resultadosEcodCorreo[0]['ecodCorreo']) && $resultadosEcodCorreo[0]['ecodCorreo'] != "" ? "'" . (trim($resultadosEcodCorreo[0]['ecodCorreo'])) . "'" : "");             
+            $ecodCorreo = (isset($resultadosEcodCorreo[0]['ecodCorreo']) && $resultadosEcodCorreo[0]['ecodCorreo'] != "" ? "'" . (trim($resultadosEcodCorreo[0]['ecodCorreo'])) . "'" : "");             
             $selectEcodUsuario="SELECT * FROM relusuariocorreo ruc WHERE ruc.ecodCorreo =".$ecodCorreo;
             $sqlEcodUsuario = DB::select(DB::raw($selectEcodUsuario));          
             foreach ($sqlEcodUsuario as $key => $v){

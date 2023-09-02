@@ -35,7 +35,14 @@ class loginController extends Controller
             try{
                 $exito = 1;
                 $Email      = (isset($result['email']) && $result['email'] != "" ? "'" . (trim($result['email'])) . "'" : "");           
-                $password   = (isset($result['password']) && $result['password'] != "" ? "'" . (trim($result['password'])) . "'" : "");             
+                if (preg_match('/^[a-zA-Z0-9.,"]+$/u', $result['password']) == 1) {
+                    $password = (isset($result['password']) && $result['password'] != "" ? "'" . (trim($result['password'])) . "'" : "");
+                }
+                else { 
+                    return response()->json([
+                    'mensaje'=>"No dijite caracteres especiales ni espacios",
+                ],401); 
+                }
                 $selectEcodCorreo = "SELECT * FROM bitcorreo bc WHERE bc.tCorreo =".$Email."AND bc.tpassword =".$password;
                 $sqlEcodCorreo = DB::select(DB::raw($selectEcodCorreo)); 
                 if($sqlEcodCorreo){
@@ -44,27 +51,28 @@ class loginController extends Controller
                             'ecodCorreo'  => ($v->ecodCorreo   ? $v->ecodCorreo    : ""),
                         );
                     }
-                    $ecodCorreo   = (isset($resultadosEcodCorreo[0]['ecodCorreo']) && $resultadosEcodCorreo[0]['ecodCorreo'] != "" ? "'" . (trim($resultadosEcodCorreo[0]['ecodCorreo'])) . "'" : "");             
-                    $selectEcodUsuario="SELECT * FROM relusuariocorreo ruc WHERE ruc.ecodCorreo =".$ecodCorreo;
+                    $ecodCorreo   = (isset($resultadosEcodCorreo[0]['ecodCorreo']) && $resultadosEcodCorreo[0]['ecodCorreo'] != "" ? "'" . (trim($resultadosEcodCorreo[0]['ecodCorreo'])) . "'" : "");                                 $selectEcodUsuario="SELECT * FROM relusuariocorreo ruc WHERE ruc.ecodCorreo =".$ecodCorreo;
                     $sqlEcodUsuario = DB::select(DB::raw($selectEcodUsuario));          
+
                     foreach ($sqlEcodUsuario as $key => $v){
                         $resultadosecodUsuario[]=array(
                             'ecodUsuario'  => ($v->ecodUsuario   ? $v->ecodUsuario    : ""),
                         );
                     }
+
                     $ecodUsuario = (isset($resultadosecodUsuario[0]['ecodUsuario']) && $resultadosecodUsuario[0]['ecodUsuario'] != "" ? "'" . (trim($resultadosecodUsuario[0]['ecodUsuario'])) . "'" : "");             
                     $selectact="SELECT ce.tNombre as Estatus, ctu.tNombre AS TipoUsuario FROM catusuarios cu 
                     LEFT JOIN catestatus ce ON ce.ecodEstatus = cu.ecodEstatus
-                    LEFT JOIN cattipousuario ctu ON ctu.ecotTipoEsuario = cu.ecodTipoUsuario
+                    LEFT JOIN cattipousuario ctu ON ctu.ecodTipoUsuario = cu.ecodTipoUsuario
                     WHERE cu.ecodUsuario=".$ecodUsuario;
-                    $sqlact = DB::select(DB::raw($selectact));          
+                    $sqlact = DB::select(DB::raw($selectact));
                     foreach ($sqlact as $key => $v){
                         $resultadosact[]=array(
                             'Estatus'  => ($v->Estatus   ? $v->Estatus    : ""),
                             'TipoUsuario'  => ($v->TipoUsuario   ? $v->TipoUsuario    : ""),
                         );
                     }
-                    $Estatus   = (isset($resultadosact[0]['Estatus']) && $resultadosact[0]['Estatus'] != "" ? "'" . (trim($resultadosact[0]['Estatus'])) . "'" : "");             
+                    $Estatus = (isset($resultadosact[0]['Estatus']) && $resultadosact[0]['Estatus'] != "" ? "'" . (trim($resultadosact[0]['Estatus'])) . "'" : "");             
                     if ($Estatus == "'Activo'") {
                         $user=User::all()->where('tCorreo', $result['email'] )->first();
                         $token=JWTAuth::fromUser($user);
