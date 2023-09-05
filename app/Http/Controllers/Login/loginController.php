@@ -79,7 +79,7 @@ class loginController extends Controller
                         $tokenv   = (isset($token) && $token != "" ? "'" . (trim($token)) . "'" : "");             
                         $insert=" CALL `stpInsertarLogin`(".$ecodCorreo.",".$tokenv.")";
                         $response = DB::select($insert);
-                        $selectMenu="SELECT cm.tNombre AS Menu, cm.Iconos,cs.tNombre AS submenuNombre, cs.tUrl as urlSubMenu, ctp.tNombre AS Permisos, ctp.tNombreCorto AS PermisosCorto, cct.tNombre AS nombreController, cct.turl AS urlController 
+                        $selectMenu="SELECT rumspc.ecodRelusRarioMenuSubmenuPermisosController, cm.tNombre AS Menu,rumspc.tToken, cm.Iconos,cs.tNombre AS submenuNombre, cs.tUrl as urlSubMenu, ctp.tNombre AS Permisos, ctp.tNombreCorto AS PermisosCorto, cct.tNombre AS nombreController, cct.turl AS urlController 
                         FROM relusuariomenusubmenupermisoscontroller rumspc 
                             LEFT JOIN catmenu cm ON cm.ecodMenu= rumspc.ecodMenu 
                             LEFT JOIN catsubmenu cs ON cs.ecodSubmenu = rumspc.ecodSubmenu
@@ -96,7 +96,9 @@ class loginController extends Controller
                                 'PermisosCorto'=>$v->PermisosCorto,
                                 'Controller' => $v->nombreController,
                                 'urlController'=>$v->urlController,
-                                'Iconos'=>$v->Iconos
+                                'Iconos'=>$v->Iconos,
+                                'Token'=>$v->tToken,
+                                'ecod'=>$v->ecodRelusRarioMenuSubmenuPermisosController
                             );
                         }         
                         $exito = 0;
@@ -137,5 +139,17 @@ class loginController extends Controller
         $selectcontra="SELECT count(*) AS dl FROM bitcorreo bc WHERE bc.ecodCorreo = ".$jsonX['ecodCorreo']."  AND bc.tpassword =".$contrasena;
         $sqlcontra = DB::select(DB::raw($selectcontra));
         return response()->json(['valContra'=>$sqlcontra[0]]);
+    }
+    
+    function postValidadVista(Request $request){
+    return($request['datos'] );
+    }
+    
+    function postLogout(Request $request){
+        $tokenv = "NULL";
+        $insert=" CALL `stpInsertarLogin`(".$request['headers']['ecodCorreo'].",".$tokenv.")";
+        $response = DB::select($insert);
+
+        return($response);
     }
 }

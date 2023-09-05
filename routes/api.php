@@ -17,5 +17,7 @@ use App\Http\Controllers\Login\loginController;
 Route::post('Login', [loginController::class,'posLogin']);
 Route::post('logout', [loginController::class,'logout']);
 Route::post('Login/postValidadContrasena', [loginController::class,'postValidadContrasena'])->middleware('validadores');
+Route::post('Login/postValidadVista', [loginController::class,'postValidadVista'])->middleware('validadores');
+Route::post('Login/postLogout', [loginController::class,'postLogout'])->middleware('validadores');
 
 Auth::routes();

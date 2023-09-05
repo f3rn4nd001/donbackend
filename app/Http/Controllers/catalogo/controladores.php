@@ -38,4 +38,33 @@ class controladores extends Controller
         $sql = DB::select(DB::raw($selectMenu));
         return response()->json(($sql));
     }
+
+    public function postRegistro(Request $request){
+        if (is_array($request['datos']) || is_object($request['datos'])){
+            $result = array();
+            foreach($request['datos'] as $key => $value){$result[$key] = $this->objeto_a_array($value);}
+            $result;
+        }
+
+        $tNombre = (isset($result['controladores']['tNombre'])&&$result['controladores']['tNombre']!="" ? "'".(trim($result['controladores']['tNombre']))."'":   "NULL");
+        $tUrl = (isset($result['controladores']['tUrl'])&&$result['controladores']['tUrl']!="" ? "'".(trim($result['controladores']['tUrl']))."'":   "NULL");
+        $ecodSubmenu = (isset($result['ecodSubmenu'])&&$result['ecodSubmenu']!="" ? "'".(trim($result['ecodSubmenu']))."'":   "NULL");
+        $ecodControllers = (isset($result['controladores']['ecodControllers'])&&$result['controladores']['ecodControllers']!="" ? "'".(trim($result['controladores']['ecodControllers']))."'":   "NULL");
+        $selectEcodUsuario="SELECT * FROM relusuariocorreo ruc WHERE ruc.ecodCorreo =".$request['headers']['ecodCorreo'];
+        $sqlEcodUsuario = DB::select(DB::raw($selectEcodUsuario)); 
+        foreach ($sqlEcodUsuario as $key => $v){
+            $resultadosecodUsuario[]=array(
+                'ecodUsuario' => ($v->ecodUsuario   ? $v->ecodUsuario    : ""),
+            );
+        }
+        $loginEcodUsuarios = (isset($resultadosecodUsuario[0]['ecodUsuario']) && $resultadosecodUsuario[0]['ecodUsuario'] != "" ? "'" . (trim($resultadosecodUsuario[0]['ecodUsuario'])) . "'" : "");
+        if ($ecodControllers == 'NULL') {
+            $uui = Uuid::uuid4();
+            $uuid2 = (isset($uui)&&$uui!="" ? "'".(trim($uui))."'":   "NULL");
+            $ecodEstatus = "'ubsvkbvukabvoeho8veowbve'";
+            $inserControllers=" CALL `stpInsertarCatControllers`(".$uuid2.",".$tNombre.",".$tUrl.",".$ecodEstatus.",".$loginEcodUsuarios.")";
+            $responseControllers = DB::select($inserControllers);    
+        }
+        return response()->json([$responseControllers[0]]);
+    }
 }
